@@ -7,7 +7,7 @@
 ``` bash
 cmake -B build
 cmake --build build
-cmake build/{filename}
+build/{filename}
 ```
 
 ## Скриншоты результатов
