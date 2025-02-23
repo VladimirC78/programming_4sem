@@ -1,1 +1,0 @@
-/usr/bin/c++ -std=c++11 -g CMakeFiles/mesher.dir/mesher.cpp.o -o mesher  /usr/lib/x86_64-linux-gnu/libgmsh.so 
