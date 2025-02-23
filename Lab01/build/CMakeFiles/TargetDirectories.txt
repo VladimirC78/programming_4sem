@@ -1,0 +1,4 @@
+/mnt/c/VSCodeProjects/programming_4sem/Lab01/build/CMakeFiles/torus.dir
+/mnt/c/VSCodeProjects/programming_4sem/Lab01/build/CMakeFiles/mesher.dir
+/mnt/c/VSCodeProjects/programming_4sem/Lab01/build/CMakeFiles/edit_cache.dir
+/mnt/c/VSCodeProjects/programming_4sem/Lab01/build/CMakeFiles/rebuild_cache.dir
