@@ -138,7 +138,7 @@ public:
         }
     }
     // Метод отвечает за выполнение для всей сетки шага по времени величиной tau
-    void doTimeStep(double tau, Vect3d center, Vect3d omega, Vect3d angle_acc) {
+    void doTimeStep(double tau, Vect3d center, Vect3d omega) {
         // По сути метод просто двигает все точки
         for(unsigned int i = 0; i < nodes.size(); i++) {
             nodes[i].move(tau);
@@ -208,10 +208,12 @@ int main()
     // Шаг точек по пространству
     double h = 4.0;
     // Шаг по времени
-    double tau = 0.01;
+    double tau = 0.002;
 
-    Vect3d center = Vect3d(62.7, 36.4, 35.7);
-    Vect3d omega = Vect3d(1, 1, 1);
+    Vect3d center = Vect3d(-7, 17.1, 6.1); // Ось симметрии чашки без ручки 
+    Vect3d omega = Vect3d(0, 0, 5); // Угловая скорость собственного вращения
+    Vect3d main_omega = Vect3d(2, 0, 2); // Угловая скорость прецесии 
+    omega = omega + main_omega;
     Vect3d angle_acc = Vect3d();
 
     const unsigned int GMSH_TETR_CODE = 4;
@@ -295,9 +297,11 @@ int main()
     CalcMesh mesh(nodesCoord, *tetrsNodesTags);
 
     mesh.snapshot(0);
-    for(unsigned int step = 1; step < 100; step++) {
-        omega = omega + angle_acc;
-        mesh.doTimeStep(tau, center, omega, angle_acc);
+    for(unsigned int step = 1; step < 1000; step++) {
+        angle_acc = main_omega * omega;
+        omega = omega + angle_acc * tau;
+        // cout << omega.x << ' ' << omega.y << ' ' << omega.z << ' ' << omega.x * omega.x + omega.y * omega.y  << endl;
+        mesh.doTimeStep(tau, center, omega);
         mesh.snapshot(step);
     }
 
