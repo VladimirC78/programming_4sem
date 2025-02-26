@@ -14,4 +14,4 @@ build/{filename}
 
 ## Результаты
 
-Coming soon...
+Просто крутится - cup_rotation_basic, с векторами скоростей - cup_rotation_glyph
