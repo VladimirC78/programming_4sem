@@ -1,4 +1,0 @@
-/mnt/c/VSCodeProjects/programming_4sem/Lab03/build/CMakeFiles/demo_poisson.dir
-/mnt/c/VSCodeProjects/programming_4sem/Lab03/build/CMakeFiles/domain_creator.dir
-/mnt/c/VSCodeProjects/programming_4sem/Lab03/build/CMakeFiles/edit_cache.dir
-/mnt/c/VSCodeProjects/programming_4sem/Lab03/build/CMakeFiles/rebuild_cache.dir
