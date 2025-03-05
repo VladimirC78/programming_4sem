@@ -33,3 +33,7 @@ meshio convert star.msh domain.xml
 ```
 
 И в файле .xml поставить dim="2" вместо "3"!
+
+## Результат
+
+![image](https://github.com/VladimirC78/programming_4sem/blob/master/Lab03/star_with_heart.png)
