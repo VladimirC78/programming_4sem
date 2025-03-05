@@ -1,6 +1,7 @@
 Lab01/build/
 Lab02/build/
 Lab03/build/
+Lab03/Poisson.h
 vtk-build/
 vtk/
 vtk-install/
