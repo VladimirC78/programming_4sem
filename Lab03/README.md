@@ -21,7 +21,8 @@ ffc -l dolfin Poisson.ufl
 ``` bash
 cmake -B build
 cmake --build build
-build/{filename}
+build/demo_poisson
+build/domain_creator
 ```
 
 ## Получение сетки в формате .xml
