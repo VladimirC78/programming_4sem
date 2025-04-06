@@ -60,11 +60,11 @@ def locate_farthest(X, n):
     Возвращает наиболее удаленную точку в пространстве R^{d + 1}.
     
     Параметры:
-        X (np.array): Матрица координат в R^{d+1}
+        X (np.array): Матрица координат в R^{d + 1}
         n (int): Число точек
         
     Возвращает:
-        np.array: Наиболее удаленную точку в форме (d, 1)
+        np.array: Наиболее удаленную точку в форме (d + 1, 1)
     """
         
     ind = 0
@@ -160,7 +160,7 @@ def build_ellipse(center, ell_matrix):
     return output_ellipse
 
 
-def plot_ellipsoid(center, matrix, num_points=50):
+def build_ellipsoid(center, matrix, num_points=50):
     """
     Создает данные для отрисовки трехмерного эллипсоида по его матрице и центру
     """
@@ -248,7 +248,7 @@ elif d == 3:
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
 
-    x_e, y_e, z_e = plot_ellipsoid(center, ell_matrix, 50)
+    x_e, y_e, z_e = build_ellipsoid(center, ell_matrix, 50)
 
     ax.errorbar(A0[0], A0[1], A0[2], xerr = 0, yerr = 0, zerr = 0, fmt='.k')
     ax.plot_surface(x_e, y_e, z_e, color="r", alpha=0.3)
