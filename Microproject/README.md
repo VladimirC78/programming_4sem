@@ -15,10 +15,10 @@
 <table>
   <tr>
     <td>
-      <img src="https://github.com/VladimirC78/programming_4sem/blob/master/Microproject/general_problem/2d_animation.gif" width="300">
+      <img src="https://github.com/VladimirC78/programming_4sem/blob/master/Microproject/general_problem/2d_animation.gif" width="500">
     </td>
     <td>
-      <img src="https://github.com/VladimirC78/programming_4sem/blob/master/Microproject/general_problem/3d_animation.gif" width="300">
+      <img src="https://github.com/VladimirC78/programming_4sem/blob/master/Microproject/general_problem/3d_animation.gif" width="500">
     </td>
   </tr>
 </table>
