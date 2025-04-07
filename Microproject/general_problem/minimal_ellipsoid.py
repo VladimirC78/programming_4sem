@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 import random as rd
 from mpl_toolkits.mplot3d import Axes3D
 
+animation = True
+
 def create_distributed_points(center, matrix, d):
     """
     Генерирует случайную точки внутри заданного эллипсоида.
@@ -112,14 +114,13 @@ def form_coord_matrix(n, d):
         np.array: Координатную матрицу формы (n, d + 1)
     """
     X = np.array([])
-    test_matrix = np.eye(d) - np.eye(d)
     det = 0
 
     # Создаем симметричную положительно определенную матрицу эллипса, в котором раскиданы точки
     
     A = np.eye(d) - np.eye(d)
     while det == 0:
-        A = (np.random.rand(d, d) - 0.5) * 0.1
+        A = (np.random.rand(d, d) - 0.5) * 0.15
         det = np.linalg.det(A)
     test_matrix = A.T @ A 
 
@@ -131,6 +132,7 @@ def form_coord_matrix(n, d):
         point = np.append(create_distributed_points(center, test_matrix, d), 1)
         if i == 0:  X = point
         else:   X = np.vstack((X, point))
+
 
     return X.T, test_matrix
 
@@ -147,22 +149,35 @@ def form_main_minor(A_m):
     B = (A_m[:-1].T)[:-1]
     return B
 
-def build_ellipse(center, ell_matrix):
+def build_ellipse(center, ell_matrix, num_points = 1000):
     """
     Создает данные для отрисовки двумерного эллипса по его матрице и центру
+
+    Параметры:
+        center (np.array): Вектор координат центра эллипса
+        ell_matrix (np.array): Матрица эллипса формы (2, 2)
+
+    Возвращает:
+        np.array: Данные для построения эллипса формы (2, num_points)
     """
     evalues, half_axes = np.linalg.eigh(ell_matrix)
     radii = evalues**(-0.5)
-    theta = np.linspace(0, 2*np.pi, 1000)
+    theta = np.linspace(0, 2*np.pi, num_points)
     ellipse_set = np.array([radii[0] * np.cos(theta), radii[1] * np.sin(theta)])
     trans_ellipse = half_axes @ ellipse_set
-    output_ellipse = np.array([trans_ellipse[0] + center[0], trans_ellipse[1] + center[1]])
-    return output_ellipse
+    output = np.array([trans_ellipse[0] + center[0], trans_ellipse[1] + center[1]])
+    return output
 
 
-def build_ellipsoid(center, matrix, num_points=50):
+def build_ellipsoid(center, matrix, num_points = 1000):
     """
     Создает данные для отрисовки трехмерного эллипсоида по его матрице и центру
+
+    Параметры:
+        center (np.array): Вектор координат центра эллипса
+        ell_matrix (np.array): Матрица эллипсоида формы (3, 3) 
+    Возвращает:
+        np.array: Данные для построения эллипса формы (3, num_points)
     """
 
     eigenvalues, eigenvectors = np.linalg.eigh(matrix)
@@ -181,7 +196,94 @@ def build_ellipsoid(center, matrix, num_points=50):
     y_final = points_rotated[1] + center[1]
     z_final = points_rotated[2] + center[2]
 
-    return x_final, y_final, z_final
+    output = np.array([x_final, y_final, z_final])
+
+    return output
+
+def perform_step(step, X, cont_seq, n, d):
+    """
+    Осуществляет одну итерацию алгоритма
+    """
+
+    # Коэффициент сжатия
+    beta = 1 / (step + 2)
+    alpha = 1 - beta
+
+    # Находим самую удаленную точку 
+    farthest = locate_farthest(X, n)
+
+    # Создаем оператор сжатия по направлению этой точки
+    R = build_contraction_operator(farthest, alpha, d)
+
+    # Расчитываем новые координаты точек
+    X = R @ X
+
+    # Обновляем оператор перехода от изначального пространства
+    cont_seq = R @ cont_seq
+
+    return X, cont_seq
+
+
+def find_ellipse(cont_seq, X, n):
+    """
+    Находит матрицу и центр эллипса как сечения вспомогательного эллипсоида
+
+    Параметры:
+        cont_seq (np.array): матрица преобразования от исходного пространства
+        X (np.array): матрица координат точек в сжатом пространстве
+        n (int): количество точек
+    
+    Возвращает:
+        np.array, np.array: вектор координат центра и матрицу минимального эллипса
+    """
+
+    # Матрица вспомогательного минимального эллипсоида в R^{d + 1}
+
+    A_m = (cont_seq.T @ cont_seq) / np.linalg.norm(locate_farthest(X, n))**2
+
+    # Берем его сечение гиперплоскостью x_{d + 1} = 1
+
+    B = form_main_minor(A_m)
+
+    b = A_m.T[-1][:-1]
+
+    center = -np.dot(np.linalg.inv(B), b)
+
+    ell_matrix = B / (1 - np.dot(center, b) - A_m[-1][-1])
+
+    return center, ell_matrix
+
+
+def draw2d (center, ell_matrix, test_matrix, A0, step = 0):
+    plt.figure(figsize=(6, 6))
+    plt.errorbar(A0[0], A0[1], fmt=".k")
+    ellipse = build_ellipse(center, ell_matrix)
+    test_ell = build_ellipse([0, 0], test_matrix)
+    if not animation:
+        plt.plot(ellipse[0], ellipse[1], "r", label="Approximate solution, step " + str(m))
+    else:
+        plt.plot(ellipse[0], ellipse[1], "r", label="Approximate solution, step " + str(step))
+    plt.plot(test_ell[0], test_ell[1], "b", label="Initial ellipse")
+    plt.legend()
+
+    if animation:
+        plt.savefig('general_problem/animation/2Dstep' + (str(step) if step > 9 else '0' + str(step)) + '.png')
+
+def draw3d (center, ell_matrix, A0, step = 0):
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+
+    ellipsoid = build_ellipsoid(center, ell_matrix, 1000)
+
+    ax.errorbar(A0[0], A0[1], A0[2], xerr = 0, yerr = 0, zerr = 0, fmt='.k')
+    ax.plot_surface(ellipsoid[0], ellipsoid[1], ellipsoid[2], color="r", alpha=0.3)
+
+    ax.set_xlabel('X')
+    ax.set_ylabel('Y')
+    ax.set_zlabel('Z')
+
+    if animation:
+        plt.savefig('general_problem/animation/3Dstep' + (str(step) if step > 9 else '0' + str(step)) + '.png')
 
 
 print("Enter number of dimensions")
@@ -202,66 +304,33 @@ A0 = X
 
 cont_seq = np.eye(d + 1)
 
-# Основной алгоритм здесь
 # Решаем задачу в пространстве R^{d + 1} для эллипсоида с фиксированным центром
 
 for step in range(m):
-    beta = 1 / (step + 2)
-    alpha = 1 - beta
+    X, cont_seq = perform_step(step, X, cont_seq, n, d)
+    if animation:
+        center, ell_matrix = find_ellipse(cont_seq, X, n)
+        if d == 2:
+            draw2d(center, ell_matrix, test_matrix, A0, step)
+        elif d == 3:
+            draw3d(center, ell_matrix, A0, step)
 
-    # Находим самую удаленную точку 
-    farthest = locate_farthest(X, n)
 
-    # Создаем оператор сжатия по направлению этой точки
-    R = build_contraction_operator(farthest, alpha, d)
 
-    # Расчитываем новые координаты точек
-    X = R @ X
+if not animation:
+    center, ell_matrix = find_ellipse(cont_seq, X, n)
 
-    # Обновляем оператор перехода от изначального пространства
-    cont_seq = R @ cont_seq
+    # Нарисуем это все для случаев размерности 2 или 3
 
-# Матрица вспомогательного минимального эллипсоида в R^{d + 1}
+    if d == 2:
+        draw2d(center, ell_matrix, test_matrix, A0)
+    elif d == 3:
+        draw3d(center, ell_matrix, A0)
 
-A_m = (cont_seq.T @ cont_seq) / np.linalg.norm(locate_farthest(X, n))**2
-
-# Берем его сечение гиперплоскостью x_{d + 1} = 1
-
-B = form_main_minor(A_m)
-
-b = A_m.T[-1][:-1]
-
-center = -np.dot(np.linalg.inv(B), b)
-
-ell_matrix = B / (1 - np.dot(center, b) - A_m[-1][-1])
-
-# Нарисуем это все для случаев размерности 2 или 3
-
-if d == 2:
-    plt.figure(figsize=(6, 6))
-    plt.errorbar(A0[0], A0[1], fmt=".k")
-    ell = build_ellipse(center, ell_matrix)
-    test_ell = build_ellipse([0, 0], test_matrix)
-    plt.plot(ell[0], ell[1], "r", label="Приближенное решение")
-    plt.plot(test_ell[0], test_ell[1], "b", label="Изначальный эллипс")
-elif d == 3:
-    fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d')
-
-    x_e, y_e, z_e = build_ellipsoid(center, ell_matrix, 50)
-
-    ax.errorbar(A0[0], A0[1], A0[2], xerr = 0, yerr = 0, zerr = 0, fmt='.k')
-    ax.plot_surface(x_e, y_e, z_e, color="r", alpha=0.3)
-
-    ax.set_xlabel('X')
-    ax.set_ylabel('Y')
-    ax.set_zlabel('Z')
-    ax.legend()
-
-if d == 2 or d == 3:
-    plt.grid()
-    plt.legend()
-    plt.show()
+    if d == 2 or d == 3:
+        plt.grid()
+        plt.legend()
+        plt.show()
 
 
 # Или хотя бы выведем координату центра и матрицу эллипсоида, чтобы был какой-то результат для d > 3 :)
@@ -271,6 +340,12 @@ print(center)
 
 print("Матрица эллипсоида")
 print(ell_matrix)
+
+print("Матрица исходного эллипсоида")
+print(test_matrix)
+
+print("Разность матриц")
+print(ell_matrix - test_matrix)
 
 
 
