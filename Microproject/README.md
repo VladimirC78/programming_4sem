@@ -12,5 +12,9 @@
 
 Как видно из демонстраций ниже, алгоритм достаточно быстро сходится к решению - достаточно ~ 10 шагов, для лучшей точности можно сделать порядка ~ 100 шагов.
 
-| [![322]([URL_1](https://github.com/VladimirC78/programming_4sem/blob/master/Microproject/general_problem/2d_animation.gif))]([URL_1](https://github.com/VladimirC78/programming_4sem/blob/master/Microproject/general_problem/2d_animation.gif)) | [![228]([URL_2](https://github.com/VladimirC78/programming_4sem/blob/master/Microproject/general_problem/3d_animation.gif))]([URL_2](https://github.com/VladimirC78/programming_4sem/blob/master/Microproject/general_problem/3d_animation.gif)) |
-|-------------------------------|-------------------------------|
+<table>
+  <tr>
+    <td><img src="[URL_1](https://github.com/VladimirC78/programming_4sem/blob/master/Microproject/general_problem/2d_animation.gif)" alt="Минимальный эллипс" width="300"></td>
+    <td><img src="[URL_2](https://github.com/VladimirC78/programming_4sem/blob/master/Microproject/general_problem/3d_animation.gif)" alt="Минимальный эллипсоид" width="300"></td>
+  </tr>
+</table>
