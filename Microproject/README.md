@@ -12,6 +12,6 @@
 
 Как видно из демонстраций ниже, алгоритм достаточно быстро сходится к решению - достаточно ~ 10 шагов, для лучшей точности можно сделать порядка ~ 100 шагов.
 
-![til](https://github.com/VladimirC78/programming_4sem/blob/master/Microproject/general_problem/2d_animation.gif)
+![322](https://github.com/VladimirC78/programming_4sem/blob/master/Microproject/general_problem/2d_animation.gif =500x500)
 
-![til](https://github.com/VladimirC78/programming_4sem/blob/master/Microproject/general_problem/3d_animation.gif)
+![228](https://github.com/VladimirC78/programming_4sem/blob/master/Microproject/general_problem/3d_animation.gif =500x500)
