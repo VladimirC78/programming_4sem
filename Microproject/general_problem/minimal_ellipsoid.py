@@ -2,8 +2,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import random as rd
 from mpl_toolkits.mplot3d import Axes3D
+import time
 
-animation = True
+animation = False
 
 def create_distributed_points(center, matrix, d):
     """
@@ -290,30 +291,46 @@ print("Enter number of dimensions")
 
 d = int(input())
 
-print("Enter number of points")
+# print("Enter number of points")
 
-n = int(input())
+# n = int(input())
 
-print("Enter number of steps")
+# print("Enter number of steps")
 
-m = int(input())
+# m = int(input())
 
-X, test_matrix = form_coord_matrix(n, d)
+m = 100
 
-A0 = X
+f = open('time_measurements_n.txt', 'w')
 
-cont_seq = np.eye(d + 1)
+for n in range(10, 100000, 100):
 
-# Решаем задачу в пространстве R^{d + 1} для эллипсоида с фиксированным центром
+    start_time = time.time()
 
-for step in range(m):
-    X, cont_seq = perform_step(step, X, cont_seq, n, d)
-    if animation:
-        center, ell_matrix = find_ellipse(cont_seq, X, n)
-        if d == 2:
-            draw2d(center, ell_matrix, test_matrix, A0, step)
-        elif d == 3:
-            draw3d(center, ell_matrix, A0, step)
+    X, test_matrix = form_coord_matrix(n, d)
+
+    A0 = X
+
+    cont_seq = np.eye(d + 1)
+
+    # Решаем задачу в пространстве R^{d + 1} для эллипсоида с фиксированным центром
+
+    for step in range(m):
+        X, cont_seq = perform_step(step, X, cont_seq, n, d)
+        if animation:
+            center, ell_matrix = find_ellipse(cont_seq, X, n)
+            if d == 2:
+                draw2d(center, ell_matrix, test_matrix, A0, step)
+            elif d == 3:
+                draw3d(center, ell_matrix, A0, step)
+    
+    end_time = time.time()
+    t = end_time - start_time
+
+    f.write(str(n) + ' ' + str(t) + '\n')
+    print(n)
+
+f.close()
 
 
 
@@ -346,6 +363,3 @@ print(test_matrix)
 
 print("Разность матриц")
 print(ell_matrix - test_matrix)
-
-
-
