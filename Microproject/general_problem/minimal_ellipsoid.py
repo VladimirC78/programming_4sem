@@ -3,8 +3,6 @@ import matplotlib.pyplot as plt
 import random as rd
 from mpl_toolkits.mplot3d import Axes3D
 
-animation = False
-
 def create_distributed_points(center, matrix, d):
     """
     Генерирует случайную точки внутри заданного эллипсоида.
@@ -259,15 +257,10 @@ def draw2d (center, ell_matrix, test_matrix, A0, step = 0):
     plt.errorbar(A0[0], A0[1], fmt=".k")
     ellipse = build_ellipse(center, ell_matrix)
     test_ell = build_ellipse([0, 0], test_matrix)
-    if not animation:
-        plt.plot(ellipse[0], ellipse[1], "r", label="Approximate solution, step " + str(m))
-    else:
-        plt.plot(ellipse[0], ellipse[1], "r", label="Approximate solution, step " + str(step))
+    plt.plot(ellipse[0], ellipse[1], "r", label="Approximate solution, step " + str(m))
+
     plt.plot(test_ell[0], test_ell[1], "b", label="Initial ellipse")
     plt.legend()
-
-    if animation:
-        plt.savefig('general_problem/animation/2Dstep' + (str(step) if step > 9 else '0' + str(step)) + '.png')
 
 def draw3d (center, ell_matrix, A0, step = 0):
     fig = plt.figure()
@@ -281,9 +274,6 @@ def draw3d (center, ell_matrix, A0, step = 0):
     ax.set_xlabel('X')
     ax.set_ylabel('Y')
     ax.set_zlabel('Z')
-
-    if animation:
-        plt.savefig('general_problem/animation/3Dstep' + (str(step) if step > 9 else '0' + str(step)) + '.png')
 
 
 print("Enter number of dimensions")
@@ -309,30 +299,21 @@ cont_seq = np.eye(d + 1)
 
 for step in range(m):
     X, cont_seq = perform_step(step, X, cont_seq, n, d)
-    if animation:
-        center, ell_matrix = find_ellipse(cont_seq, X, n)
-        if d == 2:
-            draw2d(center, ell_matrix, test_matrix, A0, step)
-        elif d == 3:
-            draw3d(center, ell_matrix, A0, step)
 
 
+center, ell_matrix = find_ellipse(cont_seq, X, n)
 
+# Нарисуем это все для случаев размерности 2 или 3
 
-if not animation:
-    center, ell_matrix = find_ellipse(cont_seq, X, n)
+if d == 2:
+    draw2d(center, ell_matrix, test_matrix, A0)
+elif d == 3:
+    draw3d(center, ell_matrix, A0)
 
-    # Нарисуем это все для случаев размерности 2 или 3
-
-    if d == 2:
-        draw2d(center, ell_matrix, test_matrix, A0)
-    elif d == 3:
-        draw3d(center, ell_matrix, A0)
-
-    if d == 2 or d == 3:
-        plt.grid()
-        plt.legend()
-        plt.show()
+if d == 2 or d == 3:
+    plt.grid()
+    plt.legend()
+    plt.show()
 
 
 # Или хотя бы выведем координату центра и матрицу эллипсоида, чтобы был какой-то результат для d > 3 :)
